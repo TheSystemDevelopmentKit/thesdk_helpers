@@ -105,7 +105,7 @@ if [ ! -d "./Entities/${ENTITY}" ]; then
         echo "No Entities/${ENTITY} directory present -- Aborting"
         exit 1
     else
-    git filter-branch --subdirectory-filter --prune-empty "Entities/${ENTITY}"
+    git filter-branch  --prune-empty --subdirectory-filter "./Entities/${ENTITY}"
 fi
 
 git remote rm origin
