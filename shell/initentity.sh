@@ -14,12 +14,12 @@ cat << EOF
  INITENTITY Release 1.1 (06.09.2018)
  Templete generator for TheSDK entities
  Written by Marko Pikkis Kosunen
- -n
+
  SYNOPSIS
    initentity [OPTIONS] [ENTITY]
  DESCRIPTION
    Produces template directory structure for a Entity
- -n
+
  OPTIONS
    -h
        Show this help.
@@ -51,12 +51,11 @@ NAME=$1
 FNAME=`basename "$NAME"`
 TEMPLATEREMOTE="git@github.com:TheSystemDevelopmentKit/inverter.git"
 
-
-
 if [ ! -d "$NAME" ]; then
     git clone ${TEMPLATEREMOTE} ${NAME}
     cd ${NAME}
     git mv ./inverter ${NAME}
+    git mv ./@inverter ./@${NAME}
     git mv ./sv/inverter.sv ./sv/${NAME}.sv
 
     for file in $(grep -rn inverter * | awk -F : '{print $1}' | uniq | xargs); do
