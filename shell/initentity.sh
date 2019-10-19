@@ -57,18 +57,19 @@ if [ ! -d "$NAME" ]; then
     git mv ./inverter ${NAME}
     git mv ./@inverter ./@${NAME}
     git mv ./sv/inverter.sv ./sv/${NAME}.sv
+    git remote remove origin
+    git remote add origin git@github.com:TheSDK-blocks/${NAME}.git
 
     for file in $(grep -rn inverter * | awk -F : '{print $1}' | uniq | xargs); do
         sed -i "s/inverter/${NAME}/g" ${file}
         git add  ${file}
     done
-    git commit -m"Renamed inverter to ${NAME}"
+    git commit -m"Renamed inverter to ${NAME} and relocated origin to git@github.com:TheSDK-blocks/${NAME}.git"
+
 else
     echo "Entity exists!!"
     exit 0
 fi
 
 exit 0
-
-
 
