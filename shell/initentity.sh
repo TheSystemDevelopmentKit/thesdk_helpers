@@ -55,8 +55,13 @@ if [ ! -d "$NAME" ]; then
     git clone ${TEMPLATEREMOTE} ${NAME}
     cd ${NAME}
     git mv ./inverter ${NAME}
-    git mv ./@inverter ./@${NAME}
+    if [ -d "./@inverter" ]; then
+        git rm -r ./@inverter
+        rm -rf ./@inverter
+    fi
     git mv ./sv/inverter.sv ./sv/${NAME}.sv
+    git mv ./vhdl/inverter.vhd ./vhdl/${NAME}.vhd
+    git mv ./eldo/inverter.cir ./eldo/${NAME}.cir 
     git remote remove origin
     git remote add origin git@github.com:TheSDK-blocks/${NAME}.git
 
