@@ -1,19 +1,18 @@
-README of TheSDK-The System Development Kit
+# TheSydeKick-System Development Kit
 Initiated by Marko Kosunen, marko.kosunen@aalto.fi 7.8.2017
-Last modification by Marko Kosunen, marko.kosunen@aalto.fi, 17.08.2018 15:17
 
 OBS: THE SCRIPTS TO BE SOURCED ARE WRITTEN FOR T-SHELL
 if you're using some other shell, change to tcsh or modify the scripts to be 
 compliant with your shell.
 ~>tcsh
 
-CONFIGURATION Quickstart
--Go to TheSDK directory and run 
+## CONFIGURATION Quickstart
+Go to TheSDK directory and run 
 ~>./init_submodules
 ~>./configure
 
--Edit the TheSDK.config file so that the commands for matlab and python 
-simulations are correct. 
+-Edit the TheSDK.config file so that the commands for python 
+invocations are correct. 
 Variables in TheSDK.config
 --CONTROLLER [MATLAB|PYTHON] defines which of these you want to use for main
   simulation environment.
@@ -23,12 +22,12 @@ Variables in TheSDK.config
   environment or not. Modify commands accordingly.
 
 
--Configure latex, matlab and MentorGraphics vsim tools to your path, 
+-Configure latex, and simulators ( vsim, eldo, spectre etc.) tools to your path, 
 modify sourceme.csh if needed and source it
 ~>source sourceme.csh
 
 -If you are using python, you may need to install some modules locally.
-run ./pip3.6userinstall.sh or modify it to be compliant with your current python
+run ./pip3userinstall.sh or modify it to be compliant with your current python
 version.
 ~>./pip3userinstall.sh
 
