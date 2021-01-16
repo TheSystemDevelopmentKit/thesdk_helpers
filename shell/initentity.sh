@@ -11,7 +11,7 @@
 help_f()
 {
 cat << EOF
- INITENTITY Release 1.1 (06.09.2018)
+ INITENTITY Release 1.2 (16.01.2020)
  Templete generator for TheSDK entities
  Written by Marko Pikkis Kosunen
 
@@ -21,6 +21,8 @@ cat << EOF
    Produces template directory structure for a Entity
 
  OPTIONS
+   -i  
+       Create the entity using inverter entity as a template
    -h
        Show this help.
 EOF
@@ -37,9 +39,11 @@ gitadd()
 }
 
 GITADD="0"
-while getopts h opt
+INVERTER="0"
+while getopts hi opt
 do
   case "$opt" in
+    i) INVERTER="1";;
     h) help_f; exit 0;;
     \?) help_f; exit 0;;
   esac
@@ -49,31 +53,57 @@ done
 #The name of the entity
 NAME=$1
 FNAME=`basename "$NAME"`
-TEMPLATEREMOTE="git@github.com:TheSystemDevelopmentKit/inverter.git"
+if [ "${INVERTER}" == "1" ]; then
+    TEMPLATEREMOTE="git@github.com:TheSystemDevelopmentKit/inverter.git"
+    if [ ! -d "$NAME" ]; then
+        git clone ${TEMPLATEREMOTE} ${NAME}
+        cd ${NAME}
+        git mv ./inverter ${NAME}
+        if [ -d "./@inverter" ]; then
+            git rm -r ./@inverter
+            rm -rf ./@inverter
+        fi
+        git mv ./sv/inverter.sv ./sv/${NAME}.sv
+        git mv ./vhdl/inverter.vhd ./vhdl/${NAME}.vhd
+        git mv ./spice/inverter.cir ./spice/${NAME}.cir 
+        git remote remove origin
+        git remote add origin git@github.com:TheSDK-blocks/${NAME}.git
 
-if [ ! -d "$NAME" ]; then
-    git clone ${TEMPLATEREMOTE} ${NAME}
-    cd ${NAME}
-    git mv ./inverter ${NAME}
-    if [ -d "./@inverter" ]; then
-        git rm -r ./@inverter
-        rm -rf ./@inverter
+        for file in $(grep -rn inverter * | awk -F : '{print $1}' | uniq | xargs); do
+            sed -i "s/inverter/${NAME}/g" ${file}
+            sed -i "s/Inverter/${NAME}/g" ${file}
+            git add  ${file}
+        done
+        git commit -m"Renamed inverter to ${NAME} and relocated origin to git@github.com:TheSDK-blocks/${NAME}.git"
+
+    else
+        echo "Entity exists!!"
+        exit 0
     fi
-    git mv ./sv/inverter.sv ./sv/${NAME}.sv
-    git mv ./vhdl/inverter.vhd ./vhdl/${NAME}.vhd
-    git mv ./eldo/inverter.cir ./eldo/${NAME}.cir 
-    git remote remove origin
-    git remote add origin git@github.com:TheSDK-blocks/${NAME}.git
-
-    for file in $(grep -rn inverter * | awk -F : '{print $1}' | uniq | xargs); do
-        sed -i "s/inverter/${NAME}/g" ${file}
-        git add  ${file}
-    done
-    git commit -m"Renamed inverter to ${NAME} and relocated origin to git@github.com:TheSDK-blocks/${NAME}.git"
 
 else
-    echo "Entity exists!!"
-    exit 0
+    TEMPLATEREMOTE="git@github.com:TheSystemDevelopmentKit/tutorial_entity.git"
+    if [ ! -d "$NAME" ]; then
+        git clone ${TEMPLATEREMOTE} ${NAME}
+        cd ${NAME}
+        git mv ./myentity ${NAME}
+        git mv ./sv/myentity.sv ./sv/${NAME}.sv
+        git mv ./vhdl/myentity.vhd ./vhdl/${NAME}.vhd
+        git mv ./spice/myentity.cir ./spice/${NAME}.cir 
+        git remote remove origin
+        git remote add origin git@github.com:TheSDK-blocks/${NAME}.git
+
+        for file in $(grep -rn myentity * | awk -F : '{print $1}' | uniq | xargs); do
+            sed -i "s/myentity/${NAME}/g" ${file}
+            sed -i "s/My Entity/${NAME}/g" ${file}
+            git add  ${file}
+        done
+        git commit -m"Renamed myentity to ${NAME} and relocated origin to git@github.com:TheSDK-blocks/${NAME}.git"
+
+    else
+        echo "Entity exists!!"
+        exit 0
+    fi
 fi
 
 exit 0
