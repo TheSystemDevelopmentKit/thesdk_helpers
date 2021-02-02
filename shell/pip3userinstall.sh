@@ -49,6 +49,7 @@ PACKAGES="\
     pandas \
     sphinx \
     sphinx_rtd_theme \
+    tk \
 "
 
 for package in ${PACKAGES}; do
