@@ -43,6 +43,7 @@ PACKAGES="\
     numpy \
     numpydoc \
     matplotlib \
+    tk \
     joblib \
     scipy \
     pandas \
