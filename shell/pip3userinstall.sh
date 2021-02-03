@@ -43,13 +43,12 @@ PACKAGES="\
     numpy \
     numpydoc \
     matplotlib \
-    tk \
     joblib \
     scipy \
     pandas \
     sphinx \
     sphinx_rtd_theme \
-    tk \
+    PyQt5 \
 "
 
 for package in ${PACKAGES}; do
