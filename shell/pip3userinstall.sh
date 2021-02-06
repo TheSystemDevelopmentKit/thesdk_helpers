@@ -49,6 +49,7 @@ PACKAGES="\
     sphinx \
     sphinx_rtd_theme \
     PyQt5 \
+    pyelftools \
 "
 
 for package in ${PACKAGES}; do
