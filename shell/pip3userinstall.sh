@@ -46,6 +46,7 @@ PACKAGES="\
     joblib \
     scipy \
     pandas \
+    PyQt5 \
     sphinx \
     sphinx_rtd_theme \
 "
