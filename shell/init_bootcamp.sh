@@ -109,7 +109,7 @@ DESCRIPTION="$(echo $(
 cat << EOF
 Go to a proper location in a file system, and create a directory named as your username.
 
-That is your project working directory.
+This is your project working directory.
 EOF
 ) | sed -e 's/\s/%20/g' -e 's/#/%23/g'
 )"
@@ -130,7 +130,7 @@ EOF
 
 DESCRIPTION="$(echo $(
 cat << EOF
-After closing  #${PREVIID} , go to the workind directory and clone this project there. The go to tutorial presented at https://github.com/TheSystemDevelopmentKit/TheSyDeKick_tutorial/blob/master/pdffiles/TheSyDeKick_tutorial.pdf
+After closing  #${PREVIID} , go to the workind directory and clone this project there. Then go to tutorial presented at https://github.com/TheSystemDevelopmentKit/TheSyDeKick_tutorial/blob/master/pdffiles/TheSyDeKick_tutorial.pdf
 EOF
 ) | sed -e 's/\s/%20/g' -e 's/#/%23/g'
 )"
@@ -150,7 +150,7 @@ EOF
 
 DESCRIPTION="$(echo $(
 cat << EOF
-After closing #${PREVIID} , Read through the README.md and try out the inverter simulations with various models. Study the inverter code a bit. That gives some Idea how TheSyDeKick supports multiple simulators and the formalism of IO and execution constructs.
+After closing #${PREVIID} , Read through the README.md and try out the inverter simulations with various models. Study the inverter code a bit. That gives some idea how TheSyDeKick supports multiple simulators and the formalism of IO and execution constructs.
 EOF
 ) | sed -e 's/\s/%20/g' -e 's/#/%23/g'
 )"
