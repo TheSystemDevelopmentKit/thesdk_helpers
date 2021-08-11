@@ -50,6 +50,7 @@ PACKAGES="\
     sphinx_rtd_theme \
     PyQt5 \
     pyelftools \
+    sortedcontainers \
 "
 
 for package in ${PACKAGES}; do
