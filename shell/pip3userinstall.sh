@@ -51,6 +51,7 @@ PACKAGES="\
     PyQt5 \
     pyelftools \
     sortedcontainers \
+    bitstring \
 "
 
 for package in ${PACKAGES}; do
