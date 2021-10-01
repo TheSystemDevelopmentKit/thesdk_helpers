@@ -39,6 +39,7 @@ done
 
 #Installs the missing python modules locally with pip3
 PACKAGES="\
+    wheel \
     gnureadline \
     numpy \
     numpydoc \
