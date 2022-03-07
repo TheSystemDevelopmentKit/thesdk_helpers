@@ -130,7 +130,7 @@ EOF
 
 DESCRIPTION="$(echo $(
 cat << EOF
-After closing  #${PREVIID} , go to the workind directory and clone this project there. Then go to tutorial presented at https://github.com/TheSystemDevelopmentKit/TheSyDeKick_tutorial/blob/master/pdffiles/TheSyDeKick_tutorial.pdf
+After closing  #${PREVIID} , go to the working directory and clone this project there. Then go to tutorial presented at https://github.com/TheSystemDevelopmentKit/TheSyDeKick_tutorial/blob/master/pdffiles/TheSyDeKick_tutorial.pdf
 EOF
 ) | sed -e 's/\s/%20/g' -e 's/#/%23/g'
 )"
