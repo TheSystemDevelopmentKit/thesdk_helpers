@@ -53,6 +53,7 @@ PACKAGES="\
     pyelftools \
     sortedcontainers \
     bitstring \
+    pyyaml \
 "
 
 for package in ${PACKAGES}; do
