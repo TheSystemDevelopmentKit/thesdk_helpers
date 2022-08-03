@@ -159,7 +159,7 @@ create_issue
 }
 
 # Issue 3
-part4()
+part3()
 {
 TITLE="$(echo $(
 cat << EOF
