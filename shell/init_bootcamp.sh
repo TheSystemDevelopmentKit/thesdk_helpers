@@ -150,7 +150,7 @@ EOF
 
 DESCRIPTION="$(echo $(
 cat << EOF
-After closing #${PREVIID} , Read through the README.md and try out the inverter simulations with various models. Study the inverter code a bit. That gives some idea how TheSyDeKick supports multiple simulators and the formalism of IO and execution constructs.
+After closing #${PREVIID} , Read through documentation at https://thesystemdevelopmentkit.github.io/docs/index.html and try out the inverter simulations with various models. Study the inverter code a bit. That gives some idea how TheSyDeKick supports multiple simulators and the formalism of IO and execution constructs.
 EOF
 ) | sed -e 's/\s/%20/g' -e 's/#/%23/g'
 )"
@@ -159,11 +159,35 @@ create_issue
 }
 
 # Issue 3
-part3()
+part4()
 {
 TITLE="$(echo $(
 cat << EOF
 ${UNAME} - Introduction to TheSyDeKick-Part-3 
+EOF
+) | sed -e 's/\s/%20/g' -e 's/#/%23/g'
+)"
+
+DESCRIPTION="$(echo $(
+cat << EOF
+After closing #${PREVIID} , study the structure of Entities/inverter_testbench and Entities/inverter_tests. Execute the simulation for both. Try to understand the relation of inverter, testbench and tests. Why the self test of the inverter is not sufficient for everything?
+
+This is the basis of the TheSyDeKick system verifications.
+
+EOF
+) | sed -e 's/\s/%20/g' -e 's/#/%23/g'
+)"
+
+create_issue
+}
+
+
+# Issue 4
+part4()
+{
+TITLE="$(echo $(
+cat << EOF
+${UNAME} - Introduction to TheSyDeKick-Part-4 
 EOF
 ) | sed -e 's/\s/%20/g' -e 's/#/%23/g'
 )"
@@ -186,7 +210,7 @@ create_issue
 
 for UNAME in ${USERNAMES}; do
     ASSIGNEE_IDS="$(get_userid)"
-    ISSUESCRIPTS=(part0 part1 part2 part3)
+    ISSUESCRIPTS=(part0 part1 part2 part3 part4)
         for index in ${!ISSUESCRIPTS[@]}; do
             TSTSTRING="$(echo "${ISSUESCRIPTS[$index]}" | sed -e 's/part/Part/' -e 's/[0-9]/-&/')"
             CURRID="$(get_issueid "${TSTSTRING}")"
