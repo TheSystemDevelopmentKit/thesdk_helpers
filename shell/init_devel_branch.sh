@@ -1,36 +1,32 @@
-#!/bin/sh -l
+#!/usr/bin/env bash
 #############################################################################
-# Test and relesase script for TheSyDeKick thesdk_template
-# Intended operation: When pushed to the latest release-candidate branch
-# The all major Entity submodules are updated to the HEAD of thesdk_template and the operation 
-# is tested by running the inverter selftest (probably other tests in the future)
-# If the tests are passed, the resulting updated thesdk_template module is pushed to
-# the latest development branch.
+# Initialize all tracked submodules to the same devel branch as the main
+# project if they do not have that devel branch
 # 
-# Written by Marko Kosunen, marko.kosunen@aalto.fi, 18.9.2022
+# Written by Marko Kosunen, marko.kosunen@aalto.fi, 20.11.2022
 #############################################################################
 
 help_f()
 {
 cat << EOF    
-test_and_release Release 1.0 (18.09.2022)
-For testing and releasing TheSyDeKick releases
+init_devel_branch 1.0 (22.11.2022)
+For initialization of TheSyDeKick development branhces
 Written by Marko Pikkis Kosunen
 
 SYNOPSIS
-  test_and_release.sh [OPTIONS]
+  init_devel_branhc.sh [OPTIONS]
 DESCRIPTION
    Defines and runs tests for the submodules of thesdk_template
 
 OPTIONS
   -b 
-     Branch of thesdk_template to operate on
-     Commit and push to that branch after testing.
+     Branch of thesdk_template to create. Defaults to 'master',
+     i.e creates master branch for all submodules if it does not exist.
 
-  -c Run in CI/CD with this option 
+  -c Run in CI/CD with this option. Currently not used 
 
   -t
-     STRING : Access token 
+     STRING : Access token, currently not used 
   -h
       Show this help.
 EOF
@@ -40,12 +36,12 @@ EOF
 # Token we use for push is given as the first argument
 CICD="0"
 TOKEN=""
-BRANCH=""
+BRANCH="master"
 while getopts b:ct:h opt
 do
   case "$opt" in
     b) BRANCH="$OPTARG";;
-    c) CICD="1";;
+    c) CICD="0";;
     t) TOKEN="$OPTARG";;
     h) help_f; exit 0;;
     \?) help_f;;
@@ -57,92 +53,96 @@ if [ -z "${BRANCH}" ]; then
     exit 1
 fi
 
-if [ -z "$TOKEN" ]; then
-    echo "Token must be provided for CI/CD"
-    exit 1
-fi
+#if [ -z "$TOKEN" ]; then
+#    echo "Token must be provided for CI/CD"
+#    exit 1
+#fi
 
 PID="$$"
-#If not in CICD, we will meke a test clone.
-if [ "$CICD" != "1" ]; then
-    git clone https://github.com/TheSystemDevelopmentKit/thesdk_template.git ./thesdk_template_${PID}
-    cd ./thesdk_template_${PID}
-    WORKDIR=$(pwd)
-    git checkout "$BRANCH"
-    git pull
-else
-    git config --global --add safe.directory /__w/thesdk_template/thesdk_template
-    WORKDIR=$(pwd)
-fi
-# Assumption is that we are working in the latest commit of thesdk_template.
-#ENTITY="$(git remote get-url origin | sed -n 's#\(.*/\)\(.*\)\(.git\)#\2#p')"
-HASH="$(git rev-parse --verify HEAD)"
-MESSAGE="$(git log -1 --pretty=%B | head -n 1)"
-
-PYTHONPATH="$(pwd)/Entities"
-export PYTHONPATH
-
-# For local pip-installations to follow the dependencies of the main program
-mkdir -p ${HOME}/.local/bin
-PATH="${PATH}:${HOME}./local:${HOME}/.local/bin"
-TEMPLATEDIR="$(pwd)"
-
-# Normal workflow
-./configure
-# change ssh submodule urls to git
-if [ "$CICD" == "1" ]; then
-    sed -i 's#\(url = \)\(git@\)\(.*\)\(:\)\(.*$\)#\1https://\3/\5#g' .gitmodules
-fi
-#Init the submodules as user would
-#Currently fails on ssh cloned subsubmodules
-${WORKDIR}/init_submodules.sh
-
-# Test the dependency installation
-# These are already in the buildimage
-#./pip3userinstall.sh
-
-SUBMODULES="$(sed -n '/\[submodule/p' .gitmodules | sed -n 's/.* \"\(.*\)\"]/\1/p' | xargs)"
-UNDERDEVEL=""
-for entity in ${SUBMODULES}; do 
-    echo "In $entity:"
-    cd ${WORKDIR}/${entity} && git checkout ${BRANCH} 2> /dev/null
-    if [ "$?" == "0" ]; then
-        cd ${WORKDIR}/${entity} && git pull
-        UNDERDEVEL="${UNDERDEVEL} ${entity}"
+function branchtest_local() {
+    branch=$1
+    # Local branches
+    branchtest="$(git branch | sed -n 's/\(^. \)\(.*\)/\2/p' \
+        | sed -n "/${branch}/p")"
+    echo "$branchtest"
+}
+function branchtest_remote() {
+    branch=$1
+    # Remote branches
+    branchtest="$(git branch -a \
+        | sed -n 's#\(^. \)\(remotes.*/\)#\2#p' \
+        | sed 's#remotes/.*/##g' \
+        | sed -n "/${branch}/p")"
+    echo "$branchtest"
+}
+function branchtest() {
+    brach=$1
+    if [ -z "$(branchtest_local ${BRANCH})" ]; then 
+        echo "$(branchtest_remote ${BRANCH})"
     else
-        echo "Branch ${BRANCH} does not exist for submodule ${entity}. No changes made."
+        echo "$(branchtest_local ${BRANCH})"
+    fi
+    
+}
+#If not in CICD, we will make a test clone.
+if [ "$CICD" != "1" ]; then
+    WORKDIR=$(pwd)
+    if [ -z "$(branchtest ${BRANCH})" ]; then
+        echo "Branch ${BRANCH} does not exits, creating from the current and checkout"
+        git branch ${BRANCH} && git checkout ${BRANCH} || exit 1
+    else
+        echo "Branch ${BRANCH} exits, check out, update and initialize submodules"
+        git checkout "$BRANCH" 
+        if [ ! -z "$(branchtest_remote ${BRANCH})" ]; then
+            git pull || exit 1
+        fi
+        ./init_submodules.sh
+    fi
+else
+    echo "CICD currently not supported"
+    #git config --global --add safe.directory /__w/thesdk_template/thesdk_template
+    #WORKDIR=$(pwd)
+fi
+
+# Loop through the submodules
+SUBMODULES="$(sed -n '/^SUBMODULES/,/^"/{//!p}' ./init_submodules.sh | xargs)"
+UNDERDEVEL=""
+for module in $SUBMODULES; do
+    echo "Operating on $module"
+    cd $module
+    if [ -z "$(branchtest ${BRANCH})" ]; then
+        echo "Branch ${BRANCH} does not exits, creating from the current and checkout"
+        git branch ${BRANCH} && git checkout ${BRANCH} || exit 1
+    else
+        echo "Branch ${BRANCH} exits, check out and update"
+        git checkout "$BRANCH" || exit 1
+        if [ ! -z "$(branchtest_remote ${BRANCH})" ]; then
+            git pull || exit 1
+        else
+            echo "Remote branch ${BRANCH} does not exist. Do you wish to push"
+            read ANS
+            if [ "$ANS" == "yes" ]; then
+                git push -u origin "${BRANCH}"
+                ANS=""
+                UNDERDEVEL="${UNDERDEVEL} ${module}"
+            fi
+        fi
     fi
     cd ${WORKDIR}
 done
 
-cd $TEMPLATEDIR
-# Let's perform the test(s)
-cd ${TEMPLATEDIR}/Entities/inverter && ./configure &&  make sim
-SIMSTAT=$?
-cd ${TEMPLATEDIR}/doc && make html
-DOCSTAT=$?
-
-if [ "$SIMSTAT" !=  "0" ] \
-    || [ "$DOCSTAT" !=  "0" ]; then
-    STATUS="1"
-    echo "Tests failed"
-else 
-    STATUS="0"
-    echo "Tests OK, proceeding"
-fi
-
-if [ "$STATUS" == "0" ]; then
-    cd $TEMPLATEDIR
+if [ ! -z "${UNDERDEVEL}" ]; then
+    cd ${WORKDIR}
     for entity in ${UNDERDEVEL}; do 
         echo "Staging $entity"
-        git add ${entity}
+        git add "${entity}"
     done
 
     echo "Committing changes"
     MSG=""
     COMMITMESSAGE="$(
     cat << EOF
-Auto update entities
+Initializing development branch ${BRANCH} for
 
 $(for entity in ${UNDERDEVEL}; do
     echo $entity
@@ -150,14 +150,29 @@ done)
 EOF
 )"
     echo "$COMMITMESSAGE"
-    if [ ${CICD} == "1" ]; then 
-        git config --global user.name "ecdbot"
-        git config --global user.email "${GITHUB_ACTOR}@noreply.github.com"
-        git remote set-url origin "https://x-access-token:${TOKEN}@github.com/TheSystemDevelopmentKit/thesdk_template.git"
+    #if [ ${CICD} == "1" ]; then 
+    #    git config --global user.name "ecdbot"
+    #    git config --global user.email "${GITHUB_ACTOR}@noreply.github.com"
+    #    git remote set-url origin "https://x-access-token:${TOKEN}@github.com/TheSystemDevelopmentKit/thesdk_template.git"
+    #fi
+    echo "Do you wish to commit?"
+    read ANS
+    if [ "$ANS" == "yes" ]; then
+        git commit -m"$COMMITMESSAGE"
+        ANS=""
+        echo "Do you wish to push?"
+        read ANS
+        if [ "$ANS" == "yes" ]; then
+            ANS=""
+            if [ ! -z "$(branchtest_remote ${BRANCH})" ]; then
+                git push
+            else
+                git push -u origin "${BRANCH}"
+            fi
+        fi
     fi
-    git commit -m"$COMMITMESSAGE"
-    git push 
+else
+    echo "Development branches for all sumodules exist already."
 fi
-cd ${WORKDIR} && rm -rf ./thesdk_template_${PID} 
-exit $STATUS
+exit 0
 
