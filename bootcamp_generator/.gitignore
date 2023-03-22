@@ -1,0 +1,11 @@
+TheSDK.config
+__pycache__
+*.eps
+Entities/*/*.pdf
+*~
+*.swp
+*.swo
+doc/build/*
+doc/docstrings/build/*
+*tags
+
