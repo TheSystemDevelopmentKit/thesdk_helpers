@@ -21,22 +21,15 @@ parser.add_argument('--token',   dest='token', type=str, nargs='?', const=True,
 parser.add_argument('--group',   dest='group', type=str, nargs='?', const=True, 
         default=None, help='Master group for the exercise.')
 
+parser.add_argument('--project',   dest='project', type=str, nargs='?', const=True, 
+        default=None, help='Project on which the Issues are generated')
+
 parser.add_argument('--no-ssl',   dest='ssl', type=bool, nargs='?', const=False,  
         default=True, help='Set to false to disable SSL verification.')
 
 parser.add_argument('--users',   dest='list_of_unames', type=str, nargs='?', const=False,  
         default=True, help='List of usernames separated by space')
 
-#file = '../Grading/Grading_ELEC-E9540-2023.csv'
-#fid = open(file,'r')
-#studentdb = pd.read_csv(fid,dtype=object,sep=',',header=None)
-#firstnames = studentdb.values[1:,0]   
-#lastnames = studentdb.values[1:,1]   
-#list_of_names = list(map(lambda f,l: '%s %s'%(f,l), firstnames,lastnames))
-#list_of_names=[]
-#list_of_names.append('Marko Kosunen')
-#list_of_names.append('mkosunen')
-#Start costructing exercise
 args=parser.parse_args()
 list_of_names=args.list_of_unames.split(' ')
 ex=exercise_manager( url = args.url , token = args.token, group = args.group, ssl=args.ssl)
@@ -66,46 +59,23 @@ ex.assignee_ids=ex.get_user_parameters(
         field='id')
 
 ex.assignees_to_subgroups()
-
+issues=[
+    './Issue-0.md', 
+    './Issue-1.md',
+    './Issue-2.md',
+    './Issue-3.md',
+    './Issue-4.md'
+    ]
 #Not needed for existing project
 #project_template='git@bubba.ecdl.hut.fi:elec-e9540-exec/exercise_template.git',
 for assignee in users:
-    ex.add_exercise( due_date='2023-04-02',
-            project='Exercise_project',
-            file='./Issue-0.md',
-            project_description='Project for your exercises',
-            substitution_list=[ ('<UNAME>', assignee.username)]
-                    )
-    ex.add_exercise( due_date='2023-04-02',
-            project='Exercise_project',
-            file='./Issue-3.md',
-            project_description='Project for your exercises',
-            substitution_list=[ ('<UNAME>', assignee.username)]
-                    )
-    ex.add_exercise( due_date='2023-04-02',
-            project='Exercise_project',
-            file='./Issue-1.md',
-            project_description='Project for your exercises',
-            substitution_list=[ ('<UNAME>', assignee.username)]
-                    )
-    ex.add_exercise( due_date='2023-04-02',
-            project='Exercise_project',
-            file='./Issue-2.md',
-            project_description='Project for your exercises',
-            substitution_list=[ ('<UNAME>', assignee.username)]
-                    )
-    ex.add_exercise( due_date='2023-04-02',
-            project='Exercise_project',
-            file='./Issue-3.md',
-            project_description='Project for your exercises',
-            substitution_list=[ ('<UNAME>', assignee.username)]
-                    )
-    ex.add_exercise( due_date='2023-04-02',
-            project='Exercise_project',
-            file='./Issue-4.md',
-            project_description='Project for your exercises',
-            substitution_list=[ ('<UNAME>', assignee.username)]
-                    )
+    for issue in issues:
+        ex.add_exercise( due_date='2023-04-02',
+                project=args.project,
+                file=issue,
+                project_description='Project for your exercises',
+                substitution_list=[ ('<UNAME>', assignee.username)]
+                        )
 ex.create_exercises()
 
 
