@@ -28,7 +28,11 @@ parser.add_argument('--no-ssl',   dest='ssl', type=bool, nargs='?', const=False,
         default=True, help='Set to false to disable SSL verification.')
 
 parser.add_argument('--users',   dest='list_of_unames', type=str, nargs='?', const=False,  
-        default=True, help='List of usernames separated by space')
+        default=None, help='List of usernames separated by space')
+
+parser.add_argument('--due',   dest='due_date', type=str, nargs='?', const=False,  
+        default=None, help='Due date in format YYYY-MM-DD')
+
 
 args=parser.parse_args()
 list_of_names=args.list_of_unames.split(' ')
@@ -70,7 +74,7 @@ issues=[
 #project_template='git@bubba.ecdl.hut.fi:elec-e9540-exec/exercise_template.git',
 for assignee in users:
     for issue in issues:
-        ex.add_exercise( due_date='2023-04-02',
+        ex.add_exercise( due_date=args.due_date,
                 project=args.project,
                 file=issue,
                 project_description='Project for your exercises',
