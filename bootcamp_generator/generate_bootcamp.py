@@ -24,17 +24,21 @@ parser.add_argument('--group',   dest='group', type=str, nargs='?', const=True,
 parser.add_argument('--no-ssl',   dest='ssl', type=bool, nargs='?', const=False,  
         default=True, help='Set to false to disable SSL verification.')
 
+parser.add_argument('--users',   dest='list_of_unames', type=str, nargs='?', const=False,  
+        default=True, help='List of usernames separated by space')
+
 #file = '../Grading/Grading_ELEC-E9540-2023.csv'
 #fid = open(file,'r')
 #studentdb = pd.read_csv(fid,dtype=object,sep=',',header=None)
 #firstnames = studentdb.values[1:,0]   
 #lastnames = studentdb.values[1:,1]   
 #list_of_names = list(map(lambda f,l: '%s %s'%(f,l), firstnames,lastnames))
-list_of_names=[]
-list_of_names.append('Marko Kosunen')
+#list_of_names=[]
+#list_of_names.append('Marko Kosunen')
+#list_of_names.append('mkosunen')
 #Start costructing exercise
 args=parser.parse_args()
-
+list_of_names=args.list_of_unames.split(' ')
 ex=exercise_manager( url = args.url , token = args.token, group = args.group, ssl=args.ssl)
 users,undefined=ex.find_users(find=list_of_names)
 
