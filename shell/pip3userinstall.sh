@@ -54,6 +54,8 @@ PACKAGES="\
     sortedcontainers \
     bitstring \
     pyyaml \
+    python-gitlab \
+    urllib3 \
 "
 
 for package in ${PACKAGES}; do
