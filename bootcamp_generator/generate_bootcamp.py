@@ -16,7 +16,7 @@ parser.add_argument('--url', dest='url', type=str, nargs='?', const = True,
         default=None,help='URL of the gitlab server')
 
 parser.add_argument('--token',   dest='token', type=str, nargs='?', const=True, 
-        default=None, help='Access token for gitlab server access.')
+        default=os.environ['THESDKTOKEN'], help='Access token for gitlab server access.')
 
 parser.add_argument('--group',   dest='group', type=str, nargs='?', const=True, 
         default=None, help='Master group for the exercise.')
