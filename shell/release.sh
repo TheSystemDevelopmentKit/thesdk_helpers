@@ -119,68 +119,68 @@ for entity in ${SUBMODULES}; do
     cd ${WORKDIR}
 done
 
-#cat << EOF
-#I will now go through the following entities and merge branch ${BRANCH} to branch ${TARGET}
-#$( for entity in ${UNDERDEVEL}; do
-#echo ${entity}
-#done)
-#EOF
-#read -p "Is this what you want [y|n]" ANS
-#if [ ${ANS} != "y" ]; then
-#    echo "Aborting"
-#    exit 1
-#fi
-#
-#for entity in ${UNDERDEVEL}; do 
-#    echo "In $entity:"
-#    cd ${WORKDIR}/${entity} 
-#    echo "Check out ${TARGET}"
-#    git checkout ${TARGET} 2> /dev/null
-#    git pull origin ${TARGET}
-#    if [ "$?" == "0" ]; then
-#        echo "Fetching and merging ${BRANCH} to ${TARGET}"
-#        git fetch origin ${BRANCH} \
-#            && git merge --no-commit FETCH_HEAD || $(echo "Merge failed in $entity" && exit 1)
-#        read -p "Commit [y|n]" ANS
-#        if [ ${ANS} == "y" ]; then
-#            git commit --allow-empty -m"Merged ${BRANCH} for release ${TAG}"
-#        fi
-#
-#    else
-#        echo "Checkout failed in ${entity}"
-#        exit 1
-#    fi
-#    cd ${WORKDIR}
-#done
-#
-#cat << EOF
-#I will now go through the following entities and add tag ${TAG} to current commit of ${TARGET}.
-#$( for entity in ${SUBMODULES}; do
-#echo ${entity}
-#done)
-#EOF
-#read -p "Is this what you want [y|n]" ANS
-#if [ ${ANS} != "y" ]; then
-#    echo "Aborting"
-#    exit 1
-#fi
-#
-#for entity in ${SUBMODULES}; do 
-#    echo "In $entity:"
-#    cd ${WORKDIR}/${entity} 
-#    echo "Check out ${TARGET}"
-#    git checkout ${TARGET} 2> /dev/null
-#    if [ "$?" == "0" ]; then
-#        read -p "Tag [y|n]" ANS
-#        if [ ${ANS} == "y" ]; then
-#            git tag -a ${TAG} -m"Release ${TAG}"
-#        fi
-#    else
-#        echo "Failed in ${entity}"
-#        exit 1
-#    fi
-#    cd ${WORKDIR}
-#done
+cat << EOF
+I will now go through the following entities and merge branch ${BRANCH} to branch ${TARGET}
+$( for entity in ${UNDERDEVEL}; do
+echo ${entity}
+done)
+EOF
+read -p "Is this what you want [y|n]" ANS
+if [ ${ANS} != "y" ]; then
+    echo "Aborting"
+    exit 1
+fi
+
+for entity in ${UNDERDEVEL}; do 
+    echo "In $entity:"
+    cd ${WORKDIR}/${entity} 
+    echo "Check out ${TARGET}"
+    git checkout ${TARGET} 2> /dev/null
+    git pull origin ${TARGET}
+    if [ "$?" == "0" ]; then
+        echo "Fetching and merging ${BRANCH} to ${TARGET}"
+        git fetch origin ${BRANCH} \
+            && git merge --no-commit FETCH_HEAD || $(echo "Merge failed in $entity" && exit 1)
+        read -p "Commit [y|n]" ANS
+        if [ ${ANS} == "y" ]; then
+            git commit --allow-empty -m"Merged ${BRANCH} for release ${TAG}"
+        fi
+
+    else
+        echo "Checkout failed in ${entity}"
+        exit 1
+    fi
+    cd ${WORKDIR}
+done
+
+cat << EOF
+I will now go through the following entities and add tag ${TAG} to current commit of ${TARGET}.
+$( for entity in ${SUBMODULES}; do
+echo ${entity}
+done)
+EOF
+read -p "Is this what you want [y|n]" ANS
+if [ ${ANS} != "y" ]; then
+    echo "Aborting"
+    exit 1
+fi
+
+for entity in ${SUBMODULES}; do 
+    echo "In $entity:"
+    cd ${WORKDIR}/${entity} 
+    echo "Check out ${TARGET}"
+    git checkout ${TARGET} 2> /dev/null
+    if [ "$?" == "0" ]; then
+        read -p "Tag [y|n]" ANS
+        if [ ${ANS} == "y" ]; then
+            git tag -a ${TAG} -m"Release ${TAG}"
+        fi
+    else
+        echo "Failed in ${entity}"
+        exit 1
+    fi
+    cd ${WORKDIR}
+done
 
 cat << EOF
 I will now go through the following entities and push the branch ${TARGET}
