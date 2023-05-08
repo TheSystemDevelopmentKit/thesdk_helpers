@@ -119,9 +119,9 @@ for module in $SUBMODULES; do
         if [ ! -z "$(branchtest_remote ${BRANCH})" ]; then
             git pull || exit 1
         else
-            echo "Remote branch ${BRANCH} does not exist. Do you wish to push"
+            echo "Remote branch ${BRANCH} does not exist. Do you wish to push [y|n]"
             read ANS
-            if [ "$ANS" == "yes" ]; then
+            if [ "$ANS" == "y" ]; then
                 git push -u origin "${BRANCH}"
                 ANS=""
                 UNDERDEVEL="${UNDERDEVEL} ${module}"
@@ -155,14 +155,14 @@ EOF
     #    git config --global user.email "${GITHUB_ACTOR}@noreply.github.com"
     #    git remote set-url origin "https://x-access-token:${TOKEN}@github.com/TheSystemDevelopmentKit/thesdk_template.git"
     #fi
-    echo "Do you wish to commit?"
+    echo "Do you wish to commit? [y|n]"
     read ANS
-    if [ "$ANS" == "yes" ]; then
+    if [ "$ANS" == "y" ]; then
         git commit -m"$COMMITMESSAGE"
         ANS=""
-        echo "Do you wish to push?"
+        echo "Do you wish to push? [y|n]"
         read ANS
-        if [ "$ANS" == "yes" ]; then
+        if [ "$ANS" == "y" ]; then
             ANS=""
             if [ ! -z "$(branchtest_remote ${BRANCH})" ]; then
                 git push
