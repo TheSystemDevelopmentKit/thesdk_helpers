@@ -56,6 +56,8 @@ PACKAGES="\
     pyyaml \
     python-gitlab \
     urllib3 \
+    cocotb \
+    cocotb-test \
 "
 
 for package in ${PACKAGES}; do
