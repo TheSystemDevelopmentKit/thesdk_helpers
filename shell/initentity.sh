@@ -56,26 +56,32 @@ FNAME=`basename "$NAME"`
 if [ "${INVERTER}" == "1" ]; then
     TEMPLATEREMOTE="git@github.com:TheSystemDevelopmentKit/inverter.git"
     if [ ! -d "$NAME" ]; then
-        git clone ${TEMPLATEREMOTE} ${NAME}
-        cd ${NAME}
-        git mv ./inverter ${NAME}
+        git clone ${TEMPLATEREMOTE} ${NAME} \
+        && cd ${NAME} \
+        && git mv ./inverter ${NAME}
+        STATUS=$?
+        # Old cleanups of matlab directories
         if [ -d "./@inverter" ]; then
             git rm -r ./@inverter
             rm -rf ./@inverter
         fi
-        git mv ./sv/inverter.sv ./sv/${NAME}.sv
-        git mv ./vhdl/inverter.vhd ./vhdl/${NAME}.vhd
-        git mv ./spice/inverter.cir ./spice/${NAME}.cir 
-        git remote remove origin
-        git remote add origin git@github.com:TheSDK-blocks/${NAME}.git
+        if [ ${STATUS} == "0" ]; then
+            git mv ./sv/inverter.sv ./sv/${NAME}.sv  \
+                && git mv ./vhdl/inverter.vhd ./vhdl/${NAME}.vhd \
+                && git mv ./spice/inverter.cir ./spice/${NAME}.cir  \
+                && git remote remove origin \
+                && git remote add origin git@github.com:TheSDK-blocks/${NAME}.git
 
-        for file in $(grep -rn inverter * | awk -F : '{print $1}' | uniq | xargs); do
-            sed -i "s/inverter/${NAME}/g" ${file}
-            sed -i "s/Inverter/${NAME}/g" ${file}
-            git add  ${file}
-        done
-        git commit -m"Renamed inverter to ${NAME} and relocated origin to git@github.com:TheSDK-blocks/${NAME}.git"
-
+            for file in $(grep -rn inverter * | awk -F : '{print $1}' | uniq | xargs); do
+                sed -i "s/inverter/${NAME}/g" ${file}
+                sed -i "s/Inverter/${NAME}/g" ${file}
+                git add  ${file}
+            done
+            git commit -m"Renamed inverter to ${NAME} and relocated origin to git@github.com:TheSDK-blocks/${NAME}.git"
+        else
+            echo "Initialization failed!"
+            exit 1
+        fi
     else
         echo "Entity exists!!"
         exit 0
@@ -84,22 +90,27 @@ if [ "${INVERTER}" == "1" ]; then
 else
     TEMPLATEREMOTE="git@github.com:TheSystemDevelopmentKit/tutorial_entity.git"
     if [ ! -d "$NAME" ]; then
-        git clone ${TEMPLATEREMOTE} ${NAME}
-        cd ${NAME}
-        git mv ./myentity ${NAME}
-        git mv ./sv/myentity.sv ./sv/${NAME}.sv
-        git mv ./vhdl/myentity.vhd ./vhdl/${NAME}.vhd
-        git mv ./spice/myentity.cir ./spice/${NAME}.cir 
-        git remote remove origin
-        git remote add origin git@github.com:TheSDK-blocks/${NAME}.git
+        git clone ${TEMPLATEREMOTE} ${NAME} \
+        && cd ${NAME} \
+        && git mv ./myentity ${NAME} \
+        && git mv ./sv/myentity.sv ./sv/${NAME}.sv \
+        && git mv ./vhdl/myentity.vhd ./vhdl/${NAME}.vhd \
+        && git mv ./spice/myentity.cir ./spice/${NAME}.cir  \
+        && git remote remove origin \
+        && git remote add origin git@github.com:TheSDK-blocks/${NAME}.git
+        STATUS=$?
 
-        for file in $(grep -rn myentity * | awk -F : '{print $1}' | uniq | xargs); do
-            sed -i "s/myentity/${NAME}/g" ${file}
-            sed -i "s/My Entity/${NAME}/g" ${file}
-            git add  ${file}
-        done
-        git commit -m"Renamed myentity to ${NAME} and relocated origin to git@github.com:TheSDK-blocks/${NAME}.git"
-
+        if [ ${STATUS} == "0" ]; then
+            for file in $(grep -rn myentity * | awk -F : '{print $1}' | uniq | xargs); do
+                sed -i "s/myentity/${NAME}/g" ${file}
+                sed -i "s/My Entity/${NAME}/g" ${file}
+                git add  ${file}
+            done
+            git commit -m"Renamed myentity to ${NAME} and relocated origin to git@github.com:TheSDK-blocks/${NAME}.git"
+        else
+            echo "Initialization failed!"
+            exit 1
+        fi
     else
         echo "Entity exists!!"
         exit 0
