@@ -34,7 +34,7 @@ DESCRIPTION
 
       1) Goes through the submodules
   
-      2) Checks if the given releacce candidate branch exists and pulls it
+      2) Checks if the given release candidate branch exists and pulls it
   
       3) For each of the submodules where the release_candidate branch exists, 
       it merges it to given target and commits the changes.
