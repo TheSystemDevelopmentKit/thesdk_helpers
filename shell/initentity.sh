@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #############################################################################
 # This is a templete generator for TheSDK entities. 
 # It will genarate a template directory structure for a Entity
@@ -27,7 +27,7 @@ cat << EOF
        Show this help.
 EOF
 }
-
+# Function to perfor git add
 gitadd()
 {
     CFILE=$1
@@ -49,6 +49,13 @@ do
   esac
   shift
 done
+
+# Check that we are in the 'Entities' directory
+THISDIR="$(readlink -f $(pwd))"
+if [ "$(basename ${THISDIR})" != "Entities" ]; then
+    echo "ERROR: This script must be run in 'Entities' directory"
+    exit 1
+fi
 
 #The name of the entity
 NAME=$1
