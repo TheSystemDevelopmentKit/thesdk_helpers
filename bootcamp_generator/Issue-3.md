@@ -1,4 +1,4 @@
-<UNAME> - Introduction to TheSyDeKick-Part-3 
+# <UNAME> - Introduction to TheSyDeKick-Part-3 
 
 After closing Introduction to TheSyDeKick-Part-2, study the structure of Entities/inverter_testbench
 and Entities/inverter_tests. Execute the simulation for both. Try to understand

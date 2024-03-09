@@ -49,6 +49,7 @@ PACKAGES="\
     pandas \
     sphinx \
     sphinx_rtd_theme \
+    myst-parser \
     PyQt5 \
     pyelftools \
     sortedcontainers \
