@@ -41,7 +41,7 @@ done
 PACKAGES="\
     wheel \
     gnureadline \
-    numpy \
+    numpy>=1.26.0,<=1.26.4 \
     numpydoc \
     matplotlib \
     joblib \
