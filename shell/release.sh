@@ -62,23 +62,27 @@ EOF
 
 
 WORKDIR="$(pwd)"
-
-# Token we use for push is given as the first argument
-BRANCH=""
-TARGET=''
+RC_BRANCH=""
+TARGET=""
 TAG=""
+ANS=""
 while getopts b:t:T:h opt
 do
   case "$opt" in
-    b) BRANCH="$OPTARG";;
+    b) RC_BRANCH="$OPTARG";;
     t) TAG="$OPTARG";;
     T) TARGET="$OPTARG";;
     h) help_f; exit 0;;
     \?) help_f;;
   esac
 done
+if [ ! -d "./Entities" ]; then
+    echo "This script should be called in TheSyDeKick project root."
+    echo " You re in ${WORKDIR}"
+    exit 1
+fi
 
-if [ -z "${BRANCH}" ]; then
+if [ -z "${RC_BRANCH}" ]; then
     echo "Branch not given"
     exit 1
 fi
@@ -93,34 +97,35 @@ if [ -z "${TARGET}" ]; then
     exit 1
 fi
 
-# Normal workflow
+
+# Execute the submodule initialization as in normal workflow
 ./configure
-#Init the submodules as user would
 ${WORKDIR}/init_submodules.sh
 
-# Test the dependency installation
-# These are already in the buildimage
+# Most likely these are already installed
 #./pip3userinstall.sh
 
+# Go through all submodule in .gitmodules and pick those that have the given release candidate branch.
 SUBMODULES="$(sed -n '/\[submodule/p' .gitmodules | sed -n 's/.* \"\(.*\)\"]/\1/p' | xargs)"
 UNDERDEVEL=""
 for entity in ${SUBMODULES}; do 
     echo "In $entity:"
     cd ${WORKDIR}/${entity} 
     CURRENT="$(git rev-parse HEAD)"
-    git checkout ${BRANCH} 2> /dev/null
+    git checkout ${RC_BRANCH} 2> /dev/null
     if [ "$?" == "0" ]; then
         git pull
         UPDATED="$(git rev-parse HEAD)"
         UNDERDEVEL="${UNDERDEVEL} ${entity}"
     else
-        echo "Branch ${BRANCH} does not exist for submodule ${entity}. No changes made."
+        echo "Branch ${RC_BRANCH} does not exist for submodule ${entity}. No changes made."
     fi
     cd ${WORKDIR}
 done
 
+# Merge release candidates
 cat << EOF
-I will now go through the following entities and merge branch ${BRANCH} to branch ${TARGET}
+I will now go through the following entities and merge branch ${RC_BRANCH} to branch ${TARGET}
 $( for entity in ${UNDERDEVEL}; do
 echo ${entity}
 done)
@@ -138,12 +143,12 @@ for entity in ${UNDERDEVEL}; do
     git checkout ${TARGET} 2> /dev/null
     git pull origin ${TARGET}
     if [ "$?" == "0" ]; then
-        echo "Fetching and merging ${BRANCH} to ${TARGET}"
-        git fetch origin ${BRANCH} \
+        echo "Fetching and merging ${RC_BRANCH} to ${TARGET}"
+        git fetch origin ${RC_BRANCH} \
             && git merge --no-commit FETCH_HEAD || $(echo "Merge failed in $entity" && exit 1)
         read -p "Commit [y|n]" ANS
         if [ ${ANS} == "y" ]; then
-            git commit --allow-empty -m"Merged ${BRANCH} for release ${TAG}"
+            git commit --allow-empty -m"Merged ${RC_BRANCH} for release ${TAG}"
         fi
 
     else
@@ -153,6 +158,7 @@ for entity in ${UNDERDEVEL}; do
     cd ${WORKDIR}
 done
 
+# Tag
 cat << EOF
 I will now go through the following entities and add tag ${TAG} to current commit of ${TARGET}.
 $( for entity in ${SUBMODULES}; do
@@ -182,6 +188,7 @@ for entity in ${SUBMODULES}; do
     cd ${WORKDIR}
 done
 
+# Push tags
 cat << EOF
 I will now go through the following entities and push the branch ${TARGET}
 and tag ${TAG} to origin.
@@ -215,8 +222,9 @@ for entity in ${SUBMODULES}; do
     cd ${WORKDIR}
 done
 
+# Delete release candidate branches
 cat << EOF
-I will now go through the following entities and delete the branch ${BRANCH} from the origin.
+I will now go through the following entities and delete the branch ${RC_BRANCH} from the origin.
 
 $( for entity in ${SUBMODULES}; do
 echo ${entity}
@@ -235,10 +243,10 @@ for entity in ${SUBMODULES}; do
     echo "Check out ${TARGET}"
     git checkout ${TARGET} 2> /dev/null
     if [ "$?" == "0" ]; then
-        read -p "Delete branch ${BRANCH} from remote [y|n]" ANS
+        read -p "Delete branch ${RC_BRANCH} from remote [y|n]" ANS
         if [ ${ANS} == "y" ]; then
-            echo "Deleting ${BRANCH} from remote"
-            git push --delete origin ${BRANCH}
+            echo "Deleting ${RC_BRANCH} from remote"
+            git push --delete origin ${RC_BRANCH}
         else
             echo "Not deleting"
         fi
@@ -249,6 +257,7 @@ for entity in ${SUBMODULES}; do
     cd ${WORKDIR}
 done
 
+# Git adds at the toplevel
 cat << EOF
 I will now go through the following entities and add them to current branch.
 
@@ -270,7 +279,7 @@ if [ ${ANS} != "y" ]; then
     exit 1
 fi
 
-git commit --allow-empty -m"Submodules released from ${BRANCH} to ${TARGET} with ${TAG}"
+git commit --allow-empty -m"Submodules released from ${RC_BRANCH} to ${TARGET} with ${TAG}"
 
 echo "Release performed, you still need to merge the the master project"
 exit 0
