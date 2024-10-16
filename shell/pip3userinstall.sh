@@ -57,6 +57,10 @@ PACKAGES="\
     pyyaml \
     python-gitlab \
     urllib3 \
+    ply \
+    inform \
+    quantiphy \
+    scikit-rf \
 "
 
 for package in ${PACKAGES}; do
