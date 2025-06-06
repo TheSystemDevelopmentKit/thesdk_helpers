@@ -49,6 +49,7 @@ PACKAGES="\
     pandas \
     sphinx \
     sphinx_rtd_theme \
+    sphinxcontrib_bibtex \
     myst-parser \
     PyQt5 \
     pyelftools \
