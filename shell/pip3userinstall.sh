@@ -56,6 +56,7 @@ PACKAGES="\
     pyyaml \
     python-gitlab \
     urllib3 \
+    termcolor \
 "
 
 for package in ${PACKAGES}; do
