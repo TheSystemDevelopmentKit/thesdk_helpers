@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 #############################################################################
-# This is the script to install TheSyDeKick dependencies for the user 
-# 
+# This is the script to install TheSyDeKick dependencies for the user
+#
 # Created by Marko Kosunen, 2017
 #############################################################################
-##Function to display help with -h argument and to control 
+##Function to display help with -h argument and to control
 ##The configuration from the command line
 help_f()
 {
@@ -18,8 +18,8 @@ cat << EOF
  DESCRIPTION
    Installs required Python packages locally to users ~/.local
  OPTIONS
-   -u  
-       Upgrade also the existing packages. 
+   -u
+       Upgrade also the existing packages.
        Default: just install the missing ones.
    -h
        Show this help.
@@ -39,6 +39,7 @@ done
 
 #Installs the missing python modules locally with pip3
 PACKAGES="\
+    black \
     wheel \
     gnureadline \
     numpy>=1.26.0,<=1.26.4 \
