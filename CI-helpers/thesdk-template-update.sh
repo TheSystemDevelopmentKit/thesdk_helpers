@@ -174,7 +174,7 @@ DOCSTAT=$?
 DOCSTAT="0"
 
 for entity in inverter myentity inverter_tests; do
-    cd ${TEMPLATEDIR}/Entities/${entity} && ./configure &&  make sim
+    cd ${TEMPLATEDIR}/Entities/${entity} && ./configure &&  make sim && echo "Success" || echo "Failure"
     SIMSTAT=$?
     if [ "$SIMSTAT" !=  "0" ] \
         || [ "$DOCSTAT" !=  "0" ]; then
