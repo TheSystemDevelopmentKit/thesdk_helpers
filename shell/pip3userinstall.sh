@@ -21,13 +21,16 @@ cat << EOF
    -u
        Upgrade also the existing packages.
        Default: just install the missing ones.
+   -V  Do system wide installation. Works also in virtual environment.
    -h
        Show this help.
 EOF
 }
-PIP="pip3 install --user"
+THISDIR="$(cd $(dirname $0) && pwd)"
+PIP="pip3 install"
+VENV="0"
 UPGRADE=""
-while getopts uh opt
+while getopts uhV opt
 do
   case "$opt" in
     u) UPGRADE="--upgrade";;
@@ -37,39 +40,11 @@ do
   shift
 done
 
-#Installs the missing python modules locally with pip3
-PACKAGES="\
-    black \
-    wheel \
-    gnureadline \
-    numpy>=1.26.0,<=1.26.4 \
-    numpydoc \
-    matplotlib \
-    joblib \
-    scipy \
-    pandas \
-    sphinx \
-    sphinx_rtd_theme \
-    sphinxcontrib_bibtex \
-    myst-parser \
-    PyQt5 \
-    pyelftools \
-    sortedcontainers \
-    bitstring \
-    pyyaml \
-    python-gitlab \
-    urllib3 \
-    psf-utils \
-    ply \
-    inform \
-    quantiphy \
-    scikit-rf \
-"
-
-for package in ${PACKAGES}; do
-    echo "Installing ${package}"
-    ${PIP} ${UPGRADE} ${package}
-done
+if [ ! -z ${VIRTUAL_ENV+x} ]; then
+   $PIP $UPGRADE -r ${THISDIR}/requirements.txt  || exit 1
+else
+   $PIP $UPGRADE --user -r ${THISDIR}/requirements.txt || exit 1
+fi
 
 exit 0
 
