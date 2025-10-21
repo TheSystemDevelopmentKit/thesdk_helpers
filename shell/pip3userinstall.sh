@@ -62,6 +62,8 @@ PACKAGES="\
     inform \
     quantiphy \
     scikit-rf \
+    bitvector \
+    pyuart \
 "
 
 for package in ${PACKAGES}; do
