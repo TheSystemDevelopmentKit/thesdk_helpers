@@ -24,4 +24,6 @@ inform
 quantiphy
 scikit-rf
 readchar
+bitvector
+
 
