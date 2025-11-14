@@ -40,78 +40,11 @@ do
   shift
 done
 
-<<<<<<< HEAD
-#Installs the missing python modules locally with pip3
-PACKAGES="\
-    wheel \
-    gnureadline \
-    numpy>=1.26.0,<=1.26.4 \
-    numpydoc \
-    matplotlib \
-    joblib \
-    scipy \
-    pandas \
-    sphinx \
-    sphinx_rtd_theme \
-    myst-parser \
-    PyQt5 \
-    pyelftools \
-    sortedcontainers \
-    bitstring \
-    pyyaml \
-    python-gitlab \
-    urllib3 \
-    psf-utils \
-    ply \
-    inform \
-    quantiphy \
-    scikit-rf \
-    bitvector \
-"
-
-for package in ${PACKAGES}; do
-    echo "Installing ${package}"
-    ${PIP} ${UPGRADE} ${package}
-done
-||||||| ee7c126
-#Installs the missing python modules locally with pip3
-PACKAGES="\
-    wheel \
-    gnureadline \
-    numpy>=1.26.0,<=1.26.4 \
-    numpydoc \
-    matplotlib \
-    joblib \
-    scipy \
-    pandas \
-    sphinx \
-    sphinx_rtd_theme \
-    myst-parser \
-    PyQt5 \
-    pyelftools \
-    sortedcontainers \
-    bitstring \
-    pyyaml \
-    python-gitlab \
-    urllib3 \
-    psf-utils \
-    ply \
-    inform \
-    quantiphy \
-    scikit-rf \
-"
-
-for package in ${PACKAGES}; do
-    echo "Installing ${package}"
-    ${PIP} ${UPGRADE} ${package}
-done
-=======
 if [ ! -z ${VIRTUAL_ENV+x} ]; then
    $PIP $UPGRADE -r ${THISDIR}/requirements.txt  || exit 1
 else
    $PIP $UPGRADE --user -r ${THISDIR}/requirements.txt || exit 1
 fi
->>>>>>> v1.14_RC
 
 exit 0
 
