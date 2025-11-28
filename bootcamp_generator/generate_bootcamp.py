@@ -12,25 +12,25 @@ from exercise_manager import exercise_manager
 
 # Implement argument parser
 parser = argparse.ArgumentParser(description='Parse selectors')
-parser.add_argument('--url', dest='url', type=str, nargs='?', const = True, 
+parser.add_argument('--url', dest='url', type=str, nargs='?', const = True,
         default=None,help='URL of the gitlab server')
 
-parser.add_argument('--token',   dest='token', type=str, nargs='?', const=True, 
-        default=os.environ['THESDKTOKEN'], help='Access token for gitlab server access.')
+parser.add_argument('--token',   dest='token', type=str, nargs='?', const=True,
+        default=None, help='Access token for gitlab server access.')
 
-parser.add_argument('--group',   dest='group', type=str, nargs='?', const=True, 
+parser.add_argument('--group',   dest='group', type=str, nargs='?', const=True,
         default=None, help='Master group for the exercise.')
 
-parser.add_argument('--project',   dest='project', type=str, nargs='?', const=True, 
+parser.add_argument('--project',   dest='project', type=str, nargs='?', const=True,
         default=None, help='Project on which the Issues are generated')
 
-parser.add_argument('--no-ssl',   dest='ssl', type=bool, nargs='?', const=False,  
+parser.add_argument('--no-ssl',   dest='ssl', type=bool, nargs='?', const=False,
         default=True, help='Set to false to disable SSL verification.')
 
-parser.add_argument('--users',   dest='list_of_unames', type=str, nargs='?', const=False,  
+parser.add_argument('--users',   dest='list_of_unames', type=str, nargs='?', const=False,
         default=None, help='List of usernames separated by space')
 
-parser.add_argument('--due',   dest='due_date', type=str, nargs='?', const=False,  
+parser.add_argument('--due',   dest='due_date', type=str, nargs='?', const=False,
         default=None, help='Due date in format YYYY-MM-DD')
 
 
@@ -64,7 +64,7 @@ ex.assignee_ids=ex.get_user_parameters(
 
 ex.assignees_to_subgroups()
 issues=[
-    './Issue-0.md', 
+    './Issue-0.md',
     './Issue-1.md',
     './Issue-2.md',
     './Issue-3.md',
