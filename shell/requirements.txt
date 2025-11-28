@@ -25,6 +25,7 @@ quantiphy
 scikit-rf
 readchar
 bitvector
-cocoteb
-cocoteb-test
+cocotb
+cocotb-test
+termcolor
 
